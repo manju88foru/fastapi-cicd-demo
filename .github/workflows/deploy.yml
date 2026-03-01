@@ -9,9 +9,21 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Deploy on server
+      - name: Deploy Application
         run: |
-          cd /opt/fastapi-cicd-demo
+          APP_DIR="/opt/fastapi-cicd-demo"
+
+          echo "Go to project"
+          cd $APP_DIR
+
+          echo "Pulling latest code"
           git pull
-          docker compose down
+
+          echo "Stopping old containers"
+          docker compose down || true
+
+          echo "Building and starting containers"
           docker compose up -d --build
+
+          echo "Cleaning unused images"
+          docker image prune -f
